@@ -20,28 +20,6 @@
 ---------------------------------------------------------------------
 varying vec3 vPos;                               // Position in image
 uniform float uTime;                             // Time
-
-void main() {
-   vec3 c = vec3(.01,.01,.04);                   // Dark background
-
-   gl_FragColor = vec4(sqrt(c), 1.);             // Final pixel color
-}
----------------------------------------------------------------------
-BREAKDOWN OF A SIMPLE RAY TRACER.
-
-We start with empty space...
-
-
-<font color=#ffaaaa><i><b>NOTE:</b> All the code <font color=white><!!
->(in white above)</font> is live-editable.
-
-When you make a coding error, the code will turn <font color=#ffffa0
->yellow.</i></font></font>
----------------------------------------------------------------------
-      xx
----------------------------------------------------------------------
-varying vec3 vPos;                               // Position in image
-uniform float uTime;                             // Time
 vec3 LDir = normalize(vec3(1.,-sin(uTime),.5));  // Light direction
 
 vec2 raytraceSphere(vec3 V, vec3 W, vec4 S) {
@@ -83,6 +61,31 @@ void main() {
       brightness = mix(.1, brightness, .5);      // Diffuse surface
       c = vec3(.1,0.,.2) * brightness;
    }
+
+   gl_FragColor = vec4(sqrt(c), 1.);             // Final pixel color
+}
+---------------------------------------------------------------------
+BREAKDOWN OF A SIMPLE RAY TRACER.
+
+We start with empty space...
+
+
+<font color=#ffaaaa><i><b>NOTE:</b> All the code <font color=white><!!
+>(in white above)</font> is live-editable.
+
+When you make a coding error, the code will turn <font color=#ffffa0
+>yellow.</i></font></font>
+---------------------------------------------------------------------
+      xx
+---------------------------------------------------------------------
+varying vec3 vPos;                               // Position in image
+uniform float uTime;                             // Time
+
+void main() {
+   vec3 c = vec3(.01,.01,.04);                   // Dark background
+
+   vec3 V = vec3(0.,0.,0.);                      // Ray origin
+   vec3 W = normalize(vec3(vPos.xy, -3.));       // Ray direction
 
    gl_FragColor = vec4(sqrt(c), 1.);             // Final pixel color
 }
