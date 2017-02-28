@@ -5,28 +5,11 @@ function isChrome() {
 
 var fragmentShaderHeader = [''               // SHADER HEADER
 ,'   precision highp float;'
-,''
 ].join('\n');
 
-var uniformData = {};
-
-function declareUniform(name, type, size) {
-   uniformData[name] = {type:type, size:size};
-}
-
-function setUniform(name, data) {
-   uniformData[name].data = data;
-}
-
-function gl_start(canvas, vertexShader, update) {           // START WEBGL RUNNING IN A CANVAS
+function gl_start(canvas, vertexShader) {           // START WEBGL RUNNING IN A CANVAS
    gl_vertexShader = vertexShader;
    fragmentShader = textArea.fss[1];
-
-   for (var name in uniformData) {
-      let u = uniformData[name];
-      fragmentShaderHeader += '#define ' + name + '_length ' + u.size + '\n' +
-                              '   uniform ' + u.type + ' ' + name + (u.size > 0 ? '[' + u.size + ']' : '') + ';\n';
-   }
 
    setTimeout(function() {
       try { 
@@ -37,11 +20,8 @@ function gl_start(canvas, vertexShader, update) {           // START WEBGL RUNNI
          this.setShaders(gl_vertexShader, fragmentShader);
       }
 
-      function address(name) { var gl = canvas.gl; return gl.getUniformLocation(gl.program, name); }
-
       canvas.setShaders = function(vertexShader, fragmentShader) {            // Add the vertex and fragment shaders:
          var gl = this.gl, program = gl.createProgram();                           // Create the WebGL program.
-	 gl.program = program;
          var shaderError = '';
 	 errorLineNumber = -1;
 
@@ -73,6 +53,8 @@ function gl_start(canvas, vertexShader, update) {           // START WEBGL RUNNI
             var aPos = gl.getAttribLocation(program, 'aPos');                         // Assign aPos attribute to each vertex.
             gl.enableVertexAttribArray(aPos);
             gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+
+            gl.uTime = gl.getUniformLocation(program, 'uTime');                       // Remember address of uTime variable.
          }
 
 	 textArea.style.color = shaderError.length == 0 ? 'white' : '#ffffa0';
@@ -95,29 +77,16 @@ function gl_start(canvas, vertexShader, update) {           // START WEBGL RUNNI
       canvas.setShaders(vertexShader, fragmentShader);                        // Initialize everything,
 
       setInterval(function() {                                                // Start the animation loop.
-         time = (Date.now() - _startTime) / 1000;
          var gl = canvas.gl;
-         gl.uniform1f(address('uTime'), time);                                // Set time for the shaders.
-
-	 update();
-
-         for (var name in uniformData) {
-	    let u = uniformData[name];
-	    switch (u.type) {
-	    case 'float': gl.uniform1fv(address(name), u.data); break;
-	    case 'vec2' : gl.uniform2fv(address(name), u.data); break;
-	    case 'vec3' : gl.uniform3fv(address(name), u.data); break;
-	    case 'vec4' : gl.uniform4fv(address(name), u.data); break;
-	    }
-	 }
-
+         if (gl.startTime === undefined)                                           // First time through,
+            gl.startTime = Date.now();                                             //    record the start time.
+         gl.uniform1f(gl.uTime, (Date.now() - gl.startTime)  / 1000);              // Set time for the shaders.
          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);                                   // Render the square.
       }, 30);
 
    }, 100); // Wait 100 milliseconds after page has loaded before starting WebGL.
 }
 
-var _startTime = Date.now(), time = 0;
 var errorLineNumber = -1;
 var highlightPattern = '  ';
 var index = 0;
@@ -179,7 +148,7 @@ function addTextEditor(fss, callback) {                      // Add a text edito
 
       ,    '<TR>'
       ,    '<TD valign=top>'
-      ,        '<text id=highlight></text>'
+      ,        '<text id=highlight style="font:13px"></text>'
       ,    '</TD>'
 
       ,    '<TD valign=top>'
@@ -207,6 +176,14 @@ function addTextEditor(fss, callback) {                      // Add a text edito
       ,        '</td>'
       ,        '</tr>'
 
+      ,        '<tr>'
+      ,        '<td>'
+      ,            '<pre><font color=' + accentColor(true) + ' face=helvetica><big><text id=narrative>'
+      ,                narrative
+      ,            '</text></font><pre>'
+      ,        '</td>'
+      ,        '</tr>'
+
       ,        '</table>'
       ,    '</TD>'
       ,    '</TR>'
@@ -216,19 +193,7 @@ function addTextEditor(fss, callback) {                      // Add a text edito
       ,'</TD>'
 
       ,'<TD valign=top>'
-      ,    '<table>'
-
-      ,    '<tr><td valign=top>'
       ,    document.body.innerHTML
-      ,    '</td></tr>'
-
-      ,    '<tr><td valign=top>'
-      ,       '<pre><font color=' + accentColor(true) + ' face=helvetica><big><text id=narrative>'
-      ,          narrative
-      ,       '</text></font><pre>'
-      ,    '</td></tr>'
-
-      ,    '</table>'
       ,'</TD>'
 
       ,'</TR>'
@@ -248,7 +213,7 @@ function addTextEditor(fss, callback) {                      // Add a text edito
       for (i = 0 ; i < hlight.length ; i++)
          str += ( i == errorLineNumber ? '<font color=#ff8090>&block;&block;</font>' :
 	          hlight.charCodeAt(i) > 32 ? '&block;&block;' : '  ' ) + '\n';
-      this.innerHTML = '<font size=3><hr size=' + (isChrome() ? 10 : 15) + ' color=black><pre>' + str + '</pre>';
+      this.innerHTML = '<hr size=' + (isChrome() ? 10 : 15) + ' color=black><pre>' + str + '</pre>';
    }
 
    highlight.setHighlight(highlightPattern);

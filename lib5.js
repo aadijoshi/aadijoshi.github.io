@@ -8,25 +8,18 @@ var fragmentShaderHeader = [''               // SHADER HEADER
 ,''
 ].join('\n');
 
-var uniformData = {};
+var _fragmentShaderCodeToInsert = '';
 
-function declareUniform(name, type, size) {
-   uniformData[name] = {type:type, size:size};
+function insertFragmentShaderCode(code) {
+   _fragmentShaderCodeToInsert += code;
 }
 
-function setUniform(name, data) {
-   uniformData[name].data = data;
-}
-
-function gl_start(canvas, vertexShader, update) {           // START WEBGL RUNNING IN A CANVAS
+function gl_start(canvas, vertexShader, setup, update) {           // START WEBGL RUNNING IN A CANVAS
+   canvas.setup = setup;
    gl_vertexShader = vertexShader;
    fragmentShader = textArea.fss[1];
 
-   for (var name in uniformData) {
-      let u = uniformData[name];
-      fragmentShaderHeader += '#define ' + name + '_length ' + u.size + '\n' +
-                              '   uniform ' + u.type + ' ' + name + (u.size > 0 ? '[' + u.size + ']' : '') + ';\n';
-   }
+   fragmentShaderHeader += _fragmentShaderCodeToInsert;
 
    setTimeout(function() {
       try { 
@@ -90,27 +83,17 @@ function gl_start(canvas, vertexShader, update) {           // START WEBGL RUNNI
 				   + '</font>';
 	 }
          highlight.setHighlight(highlightPattern);
+	 this.setup(gl);
       }
 
-      canvas.setShaders(vertexShader, fragmentShader);                        // Initialize everything,
-
+      setIndex(0);
       setInterval(function() {                                                // Start the animation loop.
-         time = (Date.now() - _startTime) / 1000;
          var gl = canvas.gl;
+         if (gl.program == null)
+	    return;
+         time = (Date.now() - _startTime) / 1000;
          gl.uniform1f(address('uTime'), time);                                // Set time for the shaders.
-
-	 update();
-
-         for (var name in uniformData) {
-	    let u = uniformData[name];
-	    switch (u.type) {
-	    case 'float': gl.uniform1fv(address(name), u.data); break;
-	    case 'vec2' : gl.uniform2fv(address(name), u.data); break;
-	    case 'vec3' : gl.uniform3fv(address(name), u.data); break;
-	    case 'vec4' : gl.uniform4fv(address(name), u.data); break;
-	    }
-	 }
-
+	 update(gl);
          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);                                   // Render the square.
       }, 30);
 
@@ -132,6 +115,7 @@ function setIndex(i) {
    narrative.innerHTML = fss[index + 2];
    prevButton.style.background = index == 0 ? 'black' : accentColor(true); 
    nextButton.style.background = index == fss.length - 3 ? 'black' : accentColor(true);
+   canvas1.gl.program = null;
    canvas1.setShaders(gl_vertexShader, fss[index + 1], fss[index + 2]);
    for (i = 0 ; i < fss.length ; i += 3)
       window['indexButton' + i].style.background = accentColor(i == index);
