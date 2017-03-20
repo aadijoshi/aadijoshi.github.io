@@ -47,6 +47,18 @@ Hi, I am a bird who has had its morning espresso.
          y = this.height / 2;
       }
 
+	  var rad;
+	  var deg;
+	  for(deg = 0; deg < 360; deg++){
+		  rad = 4 * Math.cos(2*deg);
+		  x = Math.cos(deg)*rad;
+		  y = Math.sin(deg)*rad;
+		  g.lineTo(x, y);
+	  }
+
+	  g.stroke();
+
+/*
       var angle = Math.sin(time);
       var flapY = 100 * Math.sin(angle);
       var flapX = 100 * Math.cos(angle);
@@ -54,6 +66,7 @@ Hi, I am a bird who has had its morning espresso.
       g.lineTo(x, y);
       g.lineTo(x+flapX, y-flapY);
       g.stroke();
+*/
    }
 
    canvas2.update = function(g) {
