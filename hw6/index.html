@@ -47,10 +47,11 @@ Hi, I am a bird who has had its morning espresso.
          y = this.height / 2;
       }
 
+	  var size = Math.min(this.width, this.height);
 	  var rad;
 	  var deg;
 	  for(deg = 0; deg < 360; deg++){
-		  rad = 4 * Math.cos(2*deg);
+		  rad = size * Math.cos(2*deg);
 		  x = Math.cos(deg)*rad;
 		  y = Math.sin(deg)*rad;
 		  g.lineTo(x, y);
