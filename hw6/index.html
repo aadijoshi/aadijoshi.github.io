@@ -43,11 +43,15 @@
       var size = size/2;
 	  var rad;
 	  var deg;
+      var angle = Math.sin(time);
 	  for(deg = 0; deg < 360; deg++){
 		  rad = size * Math.cos(4*deg);
 		  newX = Math.cos(deg)*rad;
 		  newY = Math.sin(deg)*rad;
-		  g.lineTo(x+newX, y+newY);
+		  
+		  rotX = Math.cos(angle)*newX-Math.sin(angle)*newY;
+	      rotY = Math.sin(angle)*newX+Math.sin(angle)*newY;
+		  g.lineTo(x+rotX, y+rotY);
 	  }
 
 	  g.stroke();
