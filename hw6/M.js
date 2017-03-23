@@ -37,7 +37,20 @@ M.restore = function(m) {
 } // Pop from a stack to set the 16 values of m.
 
 M.identity = function(m) {           
-	m = [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ]; 	
+	var n;
+	var next = 0;
+	for(n = 0; n < 16; n++){
+		if( n == next){
+			m[n] = 1;
+			next += 5;
+		}
+		else{
+			m[n] = 0;
+		}
+	}
+
+	
+	//v = [ 1,0,0,0, 0,1,0,0, 0,0,1,0 0,0,0,1 ]; 	
 	//return v;
 }
 
