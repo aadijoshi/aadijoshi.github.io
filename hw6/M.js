@@ -25,6 +25,40 @@ M.translate = function(m, v)       {           } // Modify m, translating by v[0
 // Notice how I use M.matrixMultiply() to help implement other methods.
 //////////////////////////////////////////////////////////////////////////////
 
+
+M.identity  = function(m) {           
+	var n;
+	var next = 0;
+	for(n = 0; n < 16; n++){
+		if( n == next){
+			m[n] = 1;
+			next += 5;
+		}
+		else{
+			m[n] = 0;
+		}
+	}
+
+	
+	//v = [ 1,0,0,0, 0,1,0,0, 0,0,1,0 0,0,0,1 ]; 	
+	//return v;
+}
+
+M.rotateX   = function(m, radians) {           
+	v = [ 1,0,0,0, 0,cos(radians),-sin(radians),0, 0,sin(radians),cos(radians),0 0,0,0,1 ]; 	
+	M.matrixMultiply(m, v, m);
+} // Modify m, rotating about the X axis.
+
+M.rotateY   = function(m, radians) {           
+	v = [ cos(radians), 0, sin(radians), 0, 0,1,0,0 -sin(radians),0,cos(radians),1 ];
+	M.matrixMultiply(m, v, m);
+} // Modify m, rotating about the Y axis.
+
+M.rotateZ   = function(m, radians) {           
+	v = [ cos(radians), -sin(radians), 0, sin(radians), cos(radians), 0, 0,0,1,0 0,0,0,1 ];
+	M.matrixMultiply(m, v, m);
+} // Modify m, rotating about the Z axis.
+
 M.translate = function(m, v) {
    M.matrixMultiply(m, M.translationMatrix(v), m);
 }
