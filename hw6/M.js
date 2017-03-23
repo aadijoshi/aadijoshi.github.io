@@ -9,55 +9,58 @@ var M = {};
 // Your task is to implement the following methods of object M:
 //////////////////////////////////////////////////////////////////////////////
 
-M.identity  = function(m)          {           } // Set m values to identity matrix.
-M.restore   = function(m)          {           } // Pop from a stack to set the 16 values of m.
-M.rotateX   = function(m, radians) {           } // Modify m, rotating about the X axis.
-M.rotateY   = function(m, radians) {           } // Modify m, rotating about the Y axis.
-M.rotateZ   = function(m, radians) {           } // Modify m, rotating about the Z axis.
-M.save      = function(m)          {           } // Push the 16 values of m onto a stack.
-M.scale     = function(m, v)       {           } // Modify m, scaling by v[0],v[1],v[2].
-M.transform = function(m, v)       { return m; } // Return vec v transformed by matrix m.
-M.translate = function(m, v)       {           } // Modify m, translating by v[0],v[1],v[2].
 
 //////////////////////////////////////////////////////////////////////////////
 // I have given you a head start by implementing some of the methods for you.
 //
 // Notice how I use M.matrixMultiply() to help implement other methods.
 //////////////////////////////////////////////////////////////////////////////
+var stack = [];
 
-
-M.identity  = function(m) {           
+M.save = function(m) {
 	var n;
-	var next = 0;
 	for(n = 0; n < 16; n++){
-		if( n == next){
-			m[n] = 1;
-			next += 5;
-		}
-		else{
-			m[n] = 0;
-		}
+		stack.push(m[n]);
+		//console.log("Save");
+		//console.log(m[n]);
 	}
+} // Push the 16 values of m onto a stack.
 
-	
-	//v = [ 1,0,0,0, 0,1,0,0, 0,0,1,0 0,0,0,1 ]; 	
+
+M.restore = function(m) {
+	var n;
+	for(n = 15; n > -1; n--){
+		m[n] = stack.pop();
+		//console.log("Pop");
+		//console.log(m[n]);
+	}
+} // Pop from a stack to set the 16 values of m.
+
+M.identity = function(m) {           
+	m = [ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ]; 	
 	//return v;
 }
 
-M.rotateX   = function(m, radians) {           
-	v = [ 1,0,0,0, 0,cos(radians),-sin(radians),0, 0,sin(radians),cos(radians),0 0,0,0,1 ]; 	
+M.rotateX = function(m, radians) {
+	//console.log("Called");     
+	v = [ 1,0,0,0, 0,Math.cos(radians),-Math.sin(radians),0, 0,Math.sin(radians),Math.cos(radians),0, 0,0,0,1 ]; 	
 	M.matrixMultiply(m, v, m);
 } // Modify m, rotating about the X axis.
 
-M.rotateY   = function(m, radians) {           
-	v = [ cos(radians), 0, sin(radians), 0, 0,1,0,0 -sin(radians),0,cos(radians),1 ];
+M.rotateY = function(m, radians) {           
+	v = [ Math.cos(radians),0,Math.sin(radians),0, 0,1,0,0, -Math.sin(radians),0,Math.cos(radians),1, 0,0,0,1];
 	M.matrixMultiply(m, v, m);
 } // Modify m, rotating about the Y axis.
 
-M.rotateZ   = function(m, radians) {           
-	v = [ cos(radians), -sin(radians), 0, sin(radians), cos(radians), 0, 0,0,1,0 0,0,0,1 ];
+M.rotateZ = function(m, radians) {           
+	v = [ Math.cos(radians),-Math.sin(radians),0,0, Math.sin(radians), Math.cos(radians),0,0, 0,1,0,0, 0,0,0,1 ];
 	M.matrixMultiply(m, v, m);
 } // Modify m, rotating about the Z axis.
+
+M.scale = function(m, v) {          
+	s = [ v[0], v[1], v[2], 1];
+    M.matrixMultiply(m, s, m);	
+} // Modify m, scaling by v[0],v[1],v[2].
 
 M.translate = function(m, v) {
    M.matrixMultiply(m, M.translationMatrix(v), m);
