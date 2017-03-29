@@ -29,3 +29,9 @@ var S = {};
 	       2 * v - 1 ];
    }
 
+   S.sphere = function(u, v) {
+      var theta = 2 * Math.PI * u;
+      return [ Math.cos(theta),
+               Math.sin(theta),
+	       2 * v - 1 ];
+   }
