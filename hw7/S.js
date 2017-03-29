@@ -31,10 +31,15 @@ var S = {};
 
    S.spiral = function(u, v){
 		var theta = 2 * Math.PI * u;
-		var r = 2*1/v;
-		var x = r*Math.cos(theta);
-		var y = r*Math.sin(theta);
+		var r = 2;
 		var z = v;
+
+		var r2 = r*r;
+	    var z2 = z*z;
+		var d = Math.sqrt(r2+z2);
+	
+		var x = d*Math.cos(theta);
+		var y = d*Math.sin(theta);
 
 		return [ x, y, z ];
 		var r2 = 2;
