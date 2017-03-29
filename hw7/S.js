@@ -30,7 +30,7 @@ var S = {};
    }
 
    S.spiral = function(u, v){
-		return [ 1, 1, 0];
+		return [ u, v, 0];
    }
    S.sphere = function(u, v) {
 	  var phi = 2 * Math.PI * u;
