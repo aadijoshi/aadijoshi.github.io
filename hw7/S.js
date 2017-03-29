@@ -28,8 +28,15 @@ var S = {};
                Math.sin(theta),
 	       2 * v - 1 ];
    }
-
    S.sphere = function(u, v) {
+	  var phi = 2 * Math.PI * u;
+      var theta = 2 * Math.PI * v;
+	  var p = 4;
+      return [ p*Math.sin(phi)*Math.cos(theta), p*Math.sin(theta)*sin(phi),
+               p*Math.cos(phi)];
+   }
+
+   S.pyramid = function(u, v) {
       var theta = 2 * Math.PI * v;
       return [ u, u*Math.cos(theta),
                u*Math.sin(theta)];
