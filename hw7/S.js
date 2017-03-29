@@ -30,6 +30,10 @@ var S = {};
    }
 
    S.spiral = function(u, v){
+		var theta = 2 * Math.PI * u;
+		return [ Math.cos(theta),
+				   Math.sin(theta),
+			   0 ];
 		var r2 = 2;
 		var u2 = u*u;
 		var v2 = v*v;
