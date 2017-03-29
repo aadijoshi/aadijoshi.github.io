@@ -31,18 +31,12 @@ var S = {};
 
    S.spiral = function(u, v){
 		var theta = 2 * Math.PI * u;
-		var x = Math.cos(theta);
-		var y = Math.sin(theta);
-		var x2 = x*x;
-		var y2 = y*y;
-		var r2 = 2;
-		var z2 = r2-x2-y2;
-		var z = Math.sqrt(z2);
+		var r = 2;
+		var x = r*Math.cos(theta);
+		var y = r*Math.sin(theta);
+		var z = v;
 
-
-		return [ Math.cos(theta),
-				   Math.sin(theta),
-			   z ];
+		return [ x, y, z ];
 		var r2 = 2;
 		var u2 = u*u;
 		var v2 = v*v;
