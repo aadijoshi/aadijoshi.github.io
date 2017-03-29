@@ -30,7 +30,7 @@ var S = {};
    }
 
    S.spiral = function(u, v){
-		var r2 = 3;
+		var r2 = 1;
 		var u2 = u*u;
 		var v2 = v*v;
 		z2 = r2-u2-v2;
