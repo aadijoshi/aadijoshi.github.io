@@ -16,7 +16,7 @@ var S = {};
          v = j / nv;
          for (i = 0 ; i < nu ; i++) {
             u = i / nu;
-	    C.push(S._quad(f, u, v, u + 1/nu, v + 1/nv));
+	    	C.push(S._quad(f, u, v, u + 1/nu, v + 1/nv));
          }
       }
       return C;
@@ -28,12 +28,16 @@ var S = {};
                Math.sin(theta),
 	       2 * v - 1 ];
    }
+
+   S.spiral = function(u, v){
+		return [ 1, 1, 0];
+   }
    S.sphere = function(u, v) {
 	  var phi = 2 * Math.PI * u;
       var theta = 2 * Math.PI * v;
 	  var p = 4;
       return [ p*Math.sin(phi)*Math.cos(theta), p*Math.sin(theta)*sin(phi),
-               p*Math.cos(phi)];
+               p*Math.cos(theta)];
    }
 
    S.pyramid = function(u, v) {
