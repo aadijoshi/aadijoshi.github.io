@@ -17,6 +17,8 @@ var M = {};
 //////////////////////////////////////////////////////////////////////////////
 var stack = [];
 
+
+//ok
 M.save = function(m) {
 	var n;
 	for(n = 0; n < 16; n++){
@@ -26,7 +28,7 @@ M.save = function(m) {
 	}
 } // Push the 16 values of m onto a stack.
 
-
+//ok
 M.restore = function(m) {
 	var n;
 	for(n = 15; n > -1; n--){
@@ -36,6 +38,7 @@ M.restore = function(m) {
 	}
 } // Pop from a stack to set the 16 values of m.
 
+//ok
 M.identity = function(m) {           
 	var n;
 	var next = 0;
@@ -65,16 +68,20 @@ M.rotateY = function(m, radians) {
 	M.matrixMultiply(m, v, m);
 } // Modify m, rotating about the Y axis.
 
+
+//ok
 M.rotateZ = function(m, radians) {           
 	v = [ Math.cos(radians),-Math.sin(radians),0,0, Math.sin(radians), Math.cos(radians),0,0, 0,1,0,0, 0,0,0,1 ];
 	M.matrixMultiply(m, v, m);
 } // Modify m, rotating about the Z axis.
 
 M.scale = function(m, v) {          
-	s = [ v[0], v[1], v[2], 1];
+	s = [ v,0,0,1, 0,v,0,1, 0,0,v,1, 0,0,0,1];
     M.matrixMultiply(m, s, m);	
 } // Modify m, scaling by v[0],v[1],v[2].
 
+
+//ok
 M.translate = function(m, v) {
    M.matrixMultiply(m, M.translationMatrix(v), m);
 }
