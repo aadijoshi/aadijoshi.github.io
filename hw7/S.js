@@ -31,7 +31,7 @@ var S = {};
 
    S.spiral = function(u, v){
 		var theta = 2 * Math.PI * u;
-		var r = 2;
+		var r = 1;
 		var z = v;
 
 		var r2 = r*r;
