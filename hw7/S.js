@@ -36,7 +36,7 @@ var S = {};
 
 		var r2 = r*r;
 	    var z2 = z*z;
-		var d = Math.sqrt(r2+z2);
+		var d = Math.sqrt(r2-z2);
 	
 		var x = d*Math.cos(theta);
 		var y = d*Math.sin(theta);
