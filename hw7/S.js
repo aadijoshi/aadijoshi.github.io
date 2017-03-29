@@ -30,7 +30,13 @@ var S = {};
    }
 
    S.spiral = function(u, v){
-		return [ u, v, 0];
+		var r2 = 25;
+		var u2 = u*u;
+		var v2 = v*v;
+		z2 = r2-u2-v2;
+		z = Math.sqrt(z2);
+
+		return [ u, v, z];
    }
    S.sphere = function(u, v) {
 	  var phi = 2 * Math.PI * u;
