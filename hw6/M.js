@@ -76,7 +76,7 @@ M.rotateZ = function(m, radians) {
 } // Modify m, rotating about the Z axis.
 
 M.scale = function(m, v) {          
-	s = [ v, v, v, 1];
+	s = [ v,0,0,1, 0,v,0,1, 0,0,v,1, 0,0,0,1];
     M.matrixMultiply(m, s, m);	
 } // Modify m, scaling by v[0],v[1],v[2].
 
