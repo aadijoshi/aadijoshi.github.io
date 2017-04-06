@@ -32,7 +32,7 @@ var S = {};
    S.spiral = function(u, v){
 		var theta = 2 * Math.PI * u;
 		var r = 1;
-		var z = 2*v;
+		var z = v;
 
 		var r2 = r*r;
 	    var z2 = z*z;
