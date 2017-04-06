@@ -20,36 +20,9 @@ Example of Hermite curve.
 
    var m = [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0];
 
-   var Hermite = [ 2,-3,0,1,  -2,3,0,0,  1,-2,1,0,  1,-1,0,0 ];
-
    function cubic(A, t) { return A[0] * t*t*t + A[1] * t*t + A[2] * t + A[3]; }
 
-   canvas1.update = function(g) {
-      g.lineCap = 'round';
-      g.lineJoin = 'round';
-      g.lineWidth = 1;
-
-      // OUTLINE THE CANVAS
-
-      g.beginPath();
-      g.moveTo(0,0);
-      g.lineTo(this.width,0);
-      g.lineTo(this.width,this.height);
-      g.lineTo(0,this.height);
-      g.lineTo(0,0);
-      g.stroke();
-
-      var P = [
-                [ -.5, -.5,  0],
-                [  .5,  .5, .5],
-		[  .5, -.5,  0],
-	      ];
-      var R = [
-                [   1,   0,  0],
-                [   0,   1,  Math.sin(time)],
-		[   1,   0,  0],
-              ];
-
+   function hermite(Hermite, P, R){
       M.identity(m);
       M.save(m);
 
@@ -68,9 +41,71 @@ Example of Hermite curve.
             curves.push(curve);
          }
 
-         this.drawCurves(m, curves );
+	  return curves;
+   }
 
-      M.restore(m);
+   canvas1.update = function(g) {
+      g.lineCap = 'round';
+      g.lineJoin = 'round';
+      g.lineWidth = 1;
+
+      // OUTLINE THE CANVAS
+
+      g.beginPath();
+      g.moveTo(0,0);
+      g.lineTo(this.width,0);
+      g.lineTo(this.width,this.height);
+      g.lineTo(0,this.height);
+      g.lineTo(0,0);
+      g.stroke();
+
+	  var Hermites = [];
+      var P_vals = [];
+      var R_vals = [];
+
+   	  var Hermite = [ 2,-3,0,1,  -2,3,0,0,  1,-2,1,0,  1,-1,0,0 ];
+      var P = [
+                [ -.5, -.5,  0],
+                [  .5,  .5, .5],
+				[  .5, -.5,  0],
+				[  -.5,  .0,  0],
+	      ];
+
+      var R = [
+                [   1,   0,  0],
+                [   0,   1,  Math.sin(time)],
+				[   1,   0,  0],
+				[   -1,   0,  Math.sin(time)],
+              ];
+
+	  Hermites.push(Hermite);
+	  P_vals.push(P);
+      R_vals.push(R);
+
+   	  Hermite = [ 2,-2,1,1,  -3,3,-2,-1,  0,0,1,0,  1,0,0,0 ];
+      P = [
+                [ -1., -1.,  0],
+                [  0.,  0., 0],
+				[  0., -1.05,  0],
+				[  0.,  -.505,  0],
+	      ];
+
+      R = [
+                [   1,   0,  0],
+                [   0,   1,  Math.sin(time)],
+				[   1,   0,  0],
+				[   -1,   0, 0],
+              ];
+
+	  Hermites.push(Hermite);
+	  P_vals.push(P);
+      R_vals.push(R);
+
+	  for(var n = 0; n < Hermites.length; n++){
+		  var curves = hermite(Hermites[n], P_vals[n], R_vals[n]);
+		  this.drawCurves(m, curves );
+		  M.restore(m);
+	  }
    }
 
    drawCanvases([canvas1]);
