@@ -1,5 +1,5 @@
 <script src=M.js></script>
-<script src=lib2g.js></script>
+<script src=lib2e.js></script>
 
 <body bgcolor=black text=white>
 <center>
@@ -10,20 +10,12 @@
 <script id='vs_script' type='x-shader/x-vertex'>
    attribute vec3 aPos, aNor;
    varying   vec3 vPos, vNor;
-   uniform   mat4 matrix, invMatrix;
+   uniform   mat4 matrix;
    void main() {
       vec4 pos = matrix * vec4(aPos, 1.);
-      vec4 nor = vec4(aNor, 0.) * invMatrix;
-
-// dot(nor, pos);
-// dot(nor * invMatrix, matrix * pos);
-// nor . invMatrix . matrix . pos
-// nor . (invMatrix . matrix) . pos
-// nor . pos
-
       gl_Position = pos;
       vPos = pos.xyz;
-      vNor = nor.xyz;
+      vNor = aNor;
    }
 </script>
 
@@ -31,20 +23,7 @@
 varying vec3 vPos, vNor;
 void main() {
    vec3 normal = normalize(vNor);
-   vec3 L = -1.*normalize(vPos);
-   vec3 R = 2.*( dot(L, normal) ) * normal - L;
-
-   //E = -normalize(vPos)
-   vec3 E;
-   E[0] = 0.;
-   E[1] = 0.;
-   E[2] = 1.;
-
-   float d = max(0., dot(normal, L) );
-   float s = pow(max(0., dot(E, R)), 0.5);
-
-   vec3 c = normal * .5 + .5;
-   c = .05+ c * (d * 0.5 + s * 0.5 * 0.5);
+   vec3 c = normal;
    gl_FragColor = vec4(sqrt(c), 1.);
 }
 </script>
@@ -69,7 +48,7 @@ gl_start(canvas1, vs, fs,
       M.restore(m);
 
       M.save(m);
-         M.rotateX(m, 0.5*(Math.sin(time) + 1) );
+         M.rotateX(m, .5);
          obj2.setMatrix(m);
       M.restore(m);
    }
@@ -78,38 +57,28 @@ gl_start(canvas1, vs, fs,
 
    obj1 = new SceneObject();
    obj1.setVertices([
-       -0.4, 0, 0,    0,0,1.5,
-        0.4, 0, 0,    0.5,0,1,
-        0, 0.4, 0.4,  0,0.3,1,
+      -.3,-.3, 0,  0,0,1,
+       .3,-.3, 0,  0,0,1,
+       .3, .3, 0,  0,0,1,
 
-       -0.4, 0, 0.8,  0.5,0.3,1,
-        0.4, 0, 0.8,  0.1,0.2,1,
-        0,  0.4, 0.4,  0.4,0.5,1,
-
-          -0.4, 0, 0, 0,0,1,
-        -0.4, 0, 0.8, 0,0,1,
-        0,  0.4, 0.4, 0,0,1,
-
-        0.4, 0, 0,    0,0,1,
-        0.4, 0, 0.8,  0,0,1,
-        0,  0.4, 0.4, 0,0,1,
+       .3, .3, 0,  0,0,1,
+      -.3, .3, 0,  0,0,1,
+      -.3,-.3, 0,  0,0,1,
    ]);
-
    scene.addObject(obj1);
 
    obj2 = new SceneObject();
    obj2.setVertices([
-      -.4,  0,  0,  -1.5,0,1,
-      -.4,  0, .8,  -0.5,0,1,
-       .4,  0,  0,  -0.5,0,1,
+      -.2,-.2,-.3,  -1,0,.1,
+       .4,-.2, .3,  -1,0,.1,
+       .4, .4, .3,  -1,0,.1,
 
-       .4,  0,  0,  -0.5,0,1,
-       .4,  0, .8,  -1.5,0,1,
-      -.4,  0, .8,  -1.5,0,1,
+       .4, .4, .3,  -1,0,.1,
+      -.2, .4,-.3,  -1,0,.1,
+      -.2,-.2,-.3,  -1,0,.1,
    ]);
-
    scene.addObject(obj2);
-  
+
    canvas1.scene = scene;
 
 
