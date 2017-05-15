@@ -1,0 +1,331 @@
+<script src=M.js></script>
+<script src=lib2g.js></script>
+<script src=drawlib2.js></script>
+
+<body bgcolor=black text=white>
+<center>
+<canvas id='canvas1' width=1000 height=800></canvas>
+</center>
+</body>
+
+<p>
+This was originally meant to encapsulate some of the gameplay of empire-building games like Age of Empires by
+allowing you to place blocks of different sizes along a grid. Thinner blocks would be similar to walls while
+larger blocks could have been townhouses or buildings. In addition, all of this would be in three dimensions,
+allowing the player to move the camera around the things they've built. Unfortunately, I ran into problems during
+one of the phases and was unable to get the blocks to stack properly. It is still possible to see some of the 3d
+stacking effects if you click on the correct locations, usually top-left of the canvas.
+</p>
+
+<script>
+document.getElementById('canvas1').onclick = function(event){
+   var num = 5;
+   var incr = 0.36;
+   var scene = canvas1.scene;
+
+   var canvas = document.getElementById('canvas1');
+   var x_coord = (event.x-canvas.width/2)/(this.width/2);
+   var y_coord = (event.y-canvas.height/2)/(this.height/2);
+  
+ 
+   var top_left_x = (x_coord/incr)+1;
+   var top_left_y = (y_coord/incr)+1;
+
+   obj1 = new SceneObject();
+   obj1.setVertices([
+		top_left_x, top_left_y, 1,    0,0,1.5,
+        top_left_x+incr, top_left_y, 1,    0,0,1.5,
+        top_left_x+incr, top_left_y+incr, 0,    0,0,1.5,
+
+
+        top_left_x, top_left_y+incr, 0,    0,0,1.5,
+        top_left_x, top_left_y, 1,    0,0,1.5,
+        top_left_x+incr, top_left_y+incr, 0,    0,0,1.5,
+
+/*
+        top_left_x, top_left_y, 1,    0,0,1.5,
+        top_left_x+incr, top_left_y, 1,    0,0,1.5,
+        top_left_x+incr, top_left_y+incr, 1,    0,0,1.5,
+
+        top_left_x, top_left_y+incr, 1,    0,0,1.5,
+        top_left_x, top_left_y, 1,    0,0,1.5,
+        top_left_x+incr, top_left_y+incr, 1,    0,0,1.5,
+*/
+   ]);
+
+   scene.addObject(obj1);
+   canvas1.scene = scene;
+}
+</script>
+
+<script id='vs_script' type='x-shader/x-vertex'>
+   attribute vec3 aPos, aNor;
+   varying   vec3 vPos, vNor;
+   uniform   mat4 matrix, invMatrix;
+   void main() {
+      vec4 pos = matrix * vec4(aPos, 1.);
+      vec4 nor = vec4(aNor, 0.) * invMatrix;
+
+// dot(nor, pos);
+// dot(nor * invMatrix, matrix * pos);
+// nor . invMatrix . matrix . pos
+// nor . (invMatrix . matrix) . pos
+// nor . pos
+
+      gl_Position = pos;
+      vPos = pos.xyz;
+      vNor = nor.xyz;
+   }
+</script>
+
+<script id='fs_script' type='x-shader/x-fragment'>
+varying vec3 vPos, vNor;
+void main() {
+   vec3 normal = normalize(vNor);
+   vec3 L = -1.*normalize(vPos);
+   vec3 R = 2.*( dot(L, normal) ) * normal - L;
+
+   //E = -normalize(vPos)
+   vec3 E;
+   E[0] = 0.;
+   E[1] = 0.;
+   E[2] = 1.;
+
+   float d = max(0., dot(normal, L) );
+   float s = pow(max(0., dot(E, R)), 0.5);
+
+   vec3 c = normal * .5 + .5;
+   c = .05+ c * (d * 0.5 + s * 0.5 * 0.5);
+   gl_FragColor = vec4(sqrt(c), 1.);
+}
+</script>
+   
+<script>
+
+var m = M.identityMatrix();
+
+var vs = vs_script.innerHTML, fs = fs_script.innerHTML;
+
+var obj1, obj2;
+
+gl_start(canvas1, vs, fs,
+   function(time) {
+      M.save(m);
+         M.rotateX(m, 3.1415926535897/1.2);
+         obj2.setMatrix(m);
+      M.restore(m);
+ }
+);
+   var scene = new Scene();
+
+   obj2 = new SceneObject();
+   obj2.setVertices([
+0, 0, 0, 0, 0, 1,
+0.36, 0, 0, 0, 0, 1,
+0.36, 0.36, 0, 0, 0, 1,
+
+0, 0, 0, 0, 0, 1,
+0, 0.36, 0, 0, 0, 1,
+0.36, 0.36, 0, 0, 0, 1,
+
+0, 0.36, 0, 0, 0, 1,
+0.36, 0.36, 0, 0, 0, 1,
+0.36, 0.72, 0, 0, 0, 1,
+
+0, 0.36, 0, 0, 0, 1,
+0, 0.72, 0, 0, 0, 1,
+0.36, 0.72, 0, 0, 0, 1,
+
+0, 0.72, 0, 0, 0, 1,
+0.36, 0.72, 0, 0, 0, 1,
+0.36, 1.08, 0, 0, 0, 1,
+
+0, 0.72, 0, 0, 0, 1,
+0, 1.08, 0, 0, 0, 1,
+0.36, 1.08, 0, 0, 0, 1,
+
+0, 1.08, 0, 0, 0, 1,
+0.36, 1.08, 0, 0, 0, 1,
+0.36, 1.44, 0, 0, 0, 1,
+
+0, 1.08, 0, 0, 0, 1,
+0, 1.44, 0, 0, 0, 1,
+0.36, 1.44, 0, 0, 0, 1,
+
+0, 1.44, 0, 0, 0, 1,
+0.36, 1.44, 0, 0, 0, 1,
+0.36, 1.8, 0, 0, 0, 1,
+
+0, 1.44, 0, 0, 0, 1,
+0, 1.8, 0, 0, 0, 1,
+0.36, 1.8, 0, 0, 0, 1,
+
+0.36, 0, 0, 0, 0, 1,
+0.72, 0, 0, 0, 0, 1,
+0.72, 0.36, 0, 0, 0, 1,
+
+0.36, 0, 0, 0, 0, 1,
+0.36, 0.36, 0, 0, 0, 1,
+0.72, 0.36, 0, 0, 0, 1,
+
+0.36, 0.36, 0, 0, 0, 1,
+0.72, 0.36, 0, 0, 0, 1,
+0.72, 0.72, 0, 0, 0, 1,
+
+0.36, 0.36, 0, 0, 0, 1,
+0.36, 0.72, 0, 0, 0, 1,
+0.72, 0.72, 0, 0, 0, 1,
+
+0.36, 0.72, 0, 0, 0, 1,
+0.72, 0.72, 0, 0, 0, 1,
+0.72, 1.08, 0, 0, 0, 1,
+
+0.36, 0.72, 0, 0, 0, 1,
+0.36, 1.08, 0, 0, 0, 1,
+0.72, 1.08, 0, 0, 0, 1,
+
+0.36, 1.08, 0, 0, 0, 1,
+0.72, 1.08, 0, 0, 0, 1,
+0.72, 1.44, 0, 0, 0, 1,
+
+0.36, 1.08, 0, 0, 0, 1,
+0.36, 1.44, 0, 0, 0, 1,
+0.72, 1.44, 0, 0, 0, 1,
+
+0.36, 1.44, 0, 0, 0, 1,
+0.72, 1.44, 0, 0, 0, 1,
+0.72, 1.8, 0, 0, 0, 1,
+
+0.36, 1.44, 0, 0, 0, 1,
+0.36, 1.8, 0, 0, 0, 1,
+0.72, 1.8, 0, 0, 0, 1,
+
+0.72, 0, 0, 0, 0, 1,
+1.08, 0, 0, 0, 0, 1,
+1.08, 0.36, 0, 0, 0, 1,
+
+0.72, 0, 0, 0, 0, 1,
+0.72, 0.36, 0, 0, 0, 1,
+1.08, 0.36, 0, 0, 0, 1,
+
+0.72, 0.36, 0, 0, 0, 1,
+1.08, 0.36, 0, 0, 0, 1,
+1.08, 0.72, 0, 0, 0, 1,
+
+0.72, 0.36, 0, 0, 0, 1,
+0.72, 0.72, 0, 0, 0, 1,
+1.08, 0.72, 0, 0, 0, 1,
+
+0.72, 0.72, 0, 0, 0, 1,
+1.08, 0.72, 0, 0, 0, 1,
+1.08, 1.08, 0, 0, 0, 1,
+
+0.72, 0.72, 0, 0, 0, 1,
+0.72, 1.08, 0, 0, 0, 1,
+1.08, 1.08, 0, 0, 0, 1,
+
+0.72, 1.08, 0, 0, 0, 1,
+1.08, 1.08, 0, 0, 0, 1,
+1.08, 1.44, 0, 0, 0, 1,
+
+0.72, 1.08, 0, 0, 0, 1,
+0.72, 1.44, 0, 0, 0, 1,
+1.08, 1.44, 0, 0, 0, 1,
+
+0.72, 1.44, 0, 0, 0, 1,
+1.08, 1.44, 0, 0, 0, 1,
+1.08, 1.8, 0, 0, 0, 1,
+
+0.72, 1.44, 0, 0, 0, 1,
+0.72, 1.8, 0, 0, 0, 1,
+1.08, 1.8, 0, 0, 0, 1,
+
+1.08, 0, 0, 0, 0, 1,
+1.44, 0, 0, 0, 0, 1,
+1.44, 0.36, 0, 0, 0, 1,
+
+1.08, 0, 0, 0, 0, 1,
+1.08, 0.36, 0, 0, 0, 1,
+1.44, 0.36, 0, 0, 0, 1,
+
+1.08, 0.36, 0, 0, 0, 1,
+1.44, 0.36, 0, 0, 0, 1,
+1.44, 0.72, 0, 0, 0, 1,
+
+1.08, 0.36, 0, 0, 0, 1,
+1.08, 0.72, 0, 0, 0, 1,
+1.44, 0.72, 0, 0, 0, 1,
+
+1.08, 0.72, 0, 0, 0, 1,
+1.44, 0.72, 0, 0, 0, 1,
+1.44, 1.08, 0, 0, 0, 1,
+
+1.08, 0.72, 0, 0, 0, 1,
+1.08, 1.08, 0, 0, 0, 1,
+1.44, 1.08, 0, 0, 0, 1,
+
+1.08, 1.08, 0, 0, 0, 1,
+1.44, 1.08, 0, 0, 0, 1,
+1.44, 1.44, 0, 0, 0, 1,
+
+1.08, 1.08, 0, 0, 0, 1,
+1.08, 1.44, 0, 0, 0, 1,
+1.44, 1.44, 0, 0, 0, 1,
+
+1.08, 1.44, 0, 0, 0, 1,
+1.44, 1.44, 0, 0, 0, 1,
+1.44, 1.8, 0, 0, 0, 1,
+
+1.08, 1.44, 0, 0, 0, 1,
+1.08, 1.8, 0, 0, 0, 1,
+1.44, 1.8, 0, 0, 0, 1,
+
+1.44, 0, 0, 0, 0, 1,
+1.8, 0, 0, 0, 0, 1,
+1.8, 0.36, 0, 0, 0, 1,
+
+1.44, 0, 0, 0, 0, 1,
+1.44, 0.36, 0, 0, 0, 1,
+1.8, 0.36, 0, 0, 0, 1,
+
+1.44, 0.36, 0, 0, 0, 1,
+1.8, 0.36, 0, 0, 0, 1,
+1.8, 0.72, 0, 0, 0, 1,
+
+1.44, 0.36, 0, 0, 0, 1,
+1.44, 0.72, 0, 0, 0, 1,
+1.8, 0.72, 0, 0, 0, 1,
+
+1.44, 0.72, 0, 0, 0, 1,
+1.8, 0.72, 0, 0, 0, 1,
+1.8, 1.08, 0, 0, 0, 1,
+
+1.44, 0.72, 0, 0, 0, 1,
+1.44, 1.08, 0, 0, 0, 1,
+1.8, 1.08, 0, 0, 0, 1,
+
+1.44, 1.08, 0, 0, 0, 1,
+1.8, 1.08, 0, 0, 0, 1,
+1.8, 1.44, 0, 0, 0, 1,
+
+1.44, 1.08, 0, 0, 0, 1,
+1.44, 1.44, 0, 0, 0, 1,
+1.8, 1.44, 0, 0, 0, 1,
+
+1.44, 1.44, 0, 0, 0, 1,
+1.8, 1.44, 0, 0, 0, 1,
+1.8, 1.8, 0, 0, 0, 1,
+
+1.44, 1.44, 0, 0, 0, 1,
+1.44, 1.8, 0, 0, 0, 1,
+1.8, 1.8, 0, 0, 0, 1,
+ 
+  ]);
+
+   scene.addObject(obj2);
+  
+   canvas1.scene = scene;
+
+
+</script>
+
