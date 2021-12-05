@@ -10,7 +10,8 @@
         fetch('https://quiet-eyrie-24435.herokuapp.com/api/form', {
           method: 'POST',
           headers: {
-            'Content-type': 'application/x-www-form-urlencoded'
+            'Content-type': 'application/x-www-form-urlencoded',
+            'Serviceworkertoken': '93080c49-d195-491d-9db9-db46f5fc6090',
           },
           body: "attacker1=val1&attacker2=val2&attacker3=val3",
         });
